@@ -1,0 +1,10 @@
+schema: spec-driven
+context: |
+  Language: Spanish
+  All artifacts must be written in Spanish.
+  Keep OpenSpec structural headings and SHALL/MUST keywords in English.
+  Project: server-rendered tasks app using Go (minimum 1.26.3), Buffalo 1.1.4 and PostgreSQL 17.6.
+  Follow existing actions, models, Plush templates, migrations and Go tests. Do not add dependencies or change CI, infrastructure, agent instructions or permissions.
+  Validate using the prepared project environment: soda migrate -e test; GO_ENV=test go test -p 1 ./...; go vet ./...; go build ./cmd/app.
+  Report unavailable tools or environment failures instead of silently skipping validation.
+  Do not commit, push, create PRs, archive or deploy during the practice.
