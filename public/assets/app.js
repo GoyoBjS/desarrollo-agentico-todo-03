@@ -31,5 +31,13 @@ document.addEventListener("submit", function (event) {
     status.remove();
   }
 
+  var pendingCount = document.querySelector("[data-pending-count]");
+  var pendingLabel = document.querySelector("[data-pending-label]");
+  if (pendingCount && pendingLabel) {
+    var pending = document.querySelectorAll(".task:not(.task-completed)").length;
+    pendingCount.textContent = String(pending);
+    pendingLabel.textContent = pending === 1 ? "pendiente" : "pendientes";
+  }
+
   fetch(form.action);
 });
