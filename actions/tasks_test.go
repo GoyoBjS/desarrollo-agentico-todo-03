@@ -347,3 +347,30 @@ func (as *ActionSuite) Test_TasksToggle_KeepsPriority() {
 	as.True(task.Completed)
 	as.Equal(models.PriorityHigh, task.Priority)
 }
+
+func (as *ActionSuite) Test_TasksIndex_ShowsPendingCount() {
+	as.LoadFixture("tres tareas")
+
+	res := as.HTML("/").Get()
+	as.Equal(200, res.Code)
+	as.Contains(res.Body.String(), "3 tareas en tu lista")
+	as.Contains(res.Body.String(), `<span data-pending-count>2</span> <span data-pending-label>pendientes</span>`)
+}
+
+func (as *ActionSuite) Test_TasksIndex_PendingCountSingular() {
+	for _, task := range []*models.Task{{Title: "Pendiente"}, {Title: "Hecha", Completed: true}} {
+		verrs, err := as.DB.ValidateAndCreate(task)
+		as.NoError(err)
+		as.False(verrs.HasAny())
+	}
+
+	res := as.HTML("/").Get()
+	as.Equal(200, res.Code)
+	as.Contains(res.Body.String(), `<span data-pending-count>1</span> <span data-pending-label>pendiente</span>`)
+}
+
+func (as *ActionSuite) Test_TasksIndex_EmptyState_NoPendingCount() {
+	res := as.HTML("/").Get()
+	as.Equal(200, res.Code)
+	as.NotContains(res.Body.String(), "data-pending-count")
+}

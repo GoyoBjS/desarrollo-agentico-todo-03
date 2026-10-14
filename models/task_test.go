@@ -115,3 +115,8 @@ func (ms *ModelSuite) Test_Task_Priority_Unknown_Invalid() {
 func (ms *ModelSuite) Test_Task_PriorityLabel() {
 	ms.Equal("Baja", Task{Priority: PriorityLow}.PriorityLabel())
 }
+
+func (ms *ModelSuite) Test_Tasks_PendingCount() {
+	ms.Equal(0, Tasks{}.PendingCount())
+	ms.Equal(2, Tasks{{Completed: false}, {Completed: true}, {Completed: false}}.PendingCount())
+}
