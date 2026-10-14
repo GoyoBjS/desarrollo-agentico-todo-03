@@ -10,6 +10,8 @@ El trigger no contiene el pipeline: invoca el workflow `/adw`, definido en [`.cl
 
 Las piezas disponibles son `/feature`, `/bug`, `/chore` y `/implement`, en `.claude/skills/`. Las tres primeras solo escriben un plan; `/implement` ejecuta un plan aprobado sin hacer commit, push ni PR. Tu workflow debe coordinar esas fases y definir sus pasos posteriores y sus límites.
 
+Los permisos que necesita `claude -p` para ejecutar `/adw` sin preguntar están en `.claude/settings.json`: editar archivos, git sobre ramas `adw/…`, `gh pr` e `issue`, `go`, `gofmt`, `soda` y `node --check`. Están denegados el push a `main`, el force-push y `gh pr merge`. Antes del primer uso, abre `claude` una vez en la raíz del repo para iniciar sesión y aceptar la confianza de la carpeta; sin eso, `claude -p` no aplica las reglas `allow`.
+
 ## Configurar
 
 Edita **`config/adw.yml`**. No necesitas editar el código ni establecer variables de entorno:
