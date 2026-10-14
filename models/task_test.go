@@ -120,3 +120,8 @@ func (ms *ModelSuite) Test_Tasks_PendingCount() {
 	ms.Equal(0, Tasks{}.PendingCount())
 	ms.Equal(2, Tasks{{Completed: false}, {Completed: true}, {Completed: false}}.PendingCount())
 }
+
+func (ms *ModelSuite) Test_Tasks_CompletedCount() {
+	ms.Equal(0, Tasks{}.CompletedCount())
+	ms.Equal(1, Tasks{{Completed: false}, {Completed: true}, {Completed: false}}.CompletedCount())
+}

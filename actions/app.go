@@ -53,6 +53,7 @@ func App() *buffalo.App {
 		app.GET("/tasks/{task_id}/edit", TasksEdit)
 		app.PUT("/tasks/{task_id}", TasksUpdate)
 		app.PUT("/tasks/{task_id}/toggle", TasksToggle)
+		app.DELETE("/tasks/completed", TasksDestroyCompleted)
 		app.DELETE("/tasks/{task_id}", TasksDestroy)
 		app.GET("/healthz", HealthCheck)
 

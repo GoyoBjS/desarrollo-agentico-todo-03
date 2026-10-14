@@ -374,3 +374,83 @@ func (as *ActionSuite) Test_TasksIndex_EmptyState_NoPendingCount() {
 	as.Equal(200, res.Code)
 	as.NotContains(res.Body.String(), "data-pending-count")
 }
+
+func (as *ActionSuite) Test_TasksDestroyCompleted_DeletesOnlyCompleted() {
+	as.taskWithPriority("Primera", models.PriorityMedium, false)
+	as.taskWithPriority("Segunda", models.PriorityMedium, true)
+	as.taskWithPriority("Tercera", models.PriorityMedium, false)
+	as.taskWithPriority("Cuarta", models.PriorityMedium, true)
+
+	res := as.HTML("/tasks/completed").Delete()
+	as.Equal(303, res.Code)
+	as.Equal("/", res.Header().Get("Location"))
+
+	tasks := models.Tasks{}
+	as.NoError(as.DB.Order("created_at asc, id asc").All(&tasks))
+	as.Len(tasks, 2)
+	as.Equal(0, tasks.CompletedCount())
+
+	res = as.HTML("/").Get()
+	as.Equal(200, res.Code)
+	body := res.Body.String()
+	as.Less(strings.Index(body, "Primera"), strings.Index(body, "Tercera"))
+	as.NotContains(body, "Segunda")
+	as.NotContains(body, "Cuarta")
+}
+
+func (as *ActionSuite) Test_TasksDestroyCompleted_ShowsFlash() {
+	as.taskWithPriority("Hecha", models.PriorityMedium, true)
+
+	res := as.HTML("/tasks/completed").Delete()
+	as.Equal(303, res.Code)
+
+	res = as.HTML("/").Get()
+	as.Equal(200, res.Code)
+	as.Contains(res.Body.String(), "Tareas completadas eliminadas.")
+}
+
+func (as *ActionSuite) Test_TasksDestroyCompleted_NoneCompleted() {
+	as.taskWithPriority("Pendiente uno", models.PriorityMedium, false)
+	as.taskWithPriority("Pendiente dos", models.PriorityMedium, false)
+
+	res := as.HTML("/tasks/completed").Delete()
+	as.Equal(303, res.Code)
+	as.Equal("/", res.Header().Get("Location"))
+
+	count, err := as.DB.Count(&models.Task{})
+	as.NoError(err)
+	as.Equal(2, count)
+}
+
+func (as *ActionSuite) Test_TasksDestroyCompleted_EmptyList() {
+	res := as.HTML("/tasks/completed").Delete()
+	as.Equal(303, res.Code)
+	as.Equal("/", res.Header().Get("Location"))
+
+	count, err := as.DB.Count(&models.Task{})
+	as.NoError(err)
+	as.Equal(0, count)
+}
+
+func (as *ActionSuite) Test_TasksIndex_ClearCompletedVisible() {
+	as.LoadFixture("tres tareas")
+
+	res := as.HTML("/").Get()
+	as.Equal(200, res.Code)
+	as.Contains(res.Body.String(), "Eliminar completadas")
+	as.Contains(res.Body.String(), `data-confirm="¿Seguro que quieres eliminar las tareas completadas?">`)
+}
+
+func (as *ActionSuite) Test_TasksIndex_ClearCompletedHiddenWithoutCompleted() {
+	as.taskWithPriority("Pendiente", models.PriorityMedium, false)
+
+	res := as.HTML("/").Get()
+	as.Equal(200, res.Code)
+	as.Contains(res.Body.String(), `data-confirm="¿Seguro que quieres eliminar las tareas completadas?" hidden>`)
+}
+
+func (as *ActionSuite) Test_TasksIndex_ClearCompletedAbsentWhenEmpty() {
+	res := as.HTML("/").Get()
+	as.Equal(200, res.Code)
+	as.NotContains(res.Body.String(), "data-clear-completed")
+}

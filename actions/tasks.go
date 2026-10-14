@@ -139,3 +139,23 @@ func TasksDestroy(c buffalo.Context) error {
 	c.Flash().Add("success", "Tarea eliminada.")
 	return c.Redirect(http.StatusSeeOther, "/")
 }
+
+// TasksDestroyCompleted elimina todas las tareas completadas y deja las pendientes.
+func TasksDestroyCompleted(c buffalo.Context) error {
+	tx := c.Value("tx").(*pop.Connection)
+
+	count, err := tx.Where("completed = ?", true).Count(&models.Task{})
+	if err != nil {
+		return err
+	}
+	if count == 0 {
+		return c.Redirect(http.StatusSeeOther, "/")
+	}
+
+	if err := tx.Where("completed = ?", true).Delete(&models.Task{}); err != nil {
+		return err
+	}
+
+	c.Flash().Add("success", "Tareas completadas eliminadas.")
+	return c.Redirect(http.StatusSeeOther, "/")
+}

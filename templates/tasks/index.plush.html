@@ -53,6 +53,11 @@
         </li>
       <% } %>
     </ul>
+    <form action="/tasks/completed" method="POST" class="clear-completed" data-clear-completed data-confirm="¿Seguro que quieres eliminar las tareas completadas?"<%= if (tasks.CompletedCount() == 0) { %> hidden<% } %>>
+      <input type="hidden" name="authenticity_token" value="<%= authenticity_token %>">
+      <input type="hidden" name="_method" value="DELETE">
+      <button type="submit" class="button">Eliminar completadas</button>
+    </form>
   <% } %>
 </section>
 
