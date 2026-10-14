@@ -6,7 +6,7 @@ Este lanzador consulta las issues abiertas con la etiqueta configurada, de más 
 
 Necesitas Go (la versión del proyecto), Bash, GitHub CLI (`gh`) y Claude Code (`claude`) en `PATH`, autenticados, y el entorno de desarrollo del proyecto ya disponible. El lanzador reutiliza la librería YAML que ya incluye el proyecto. `--jq` usa el formateador integrado de `gh`: no hace falta instalar `jq`.
 
-El trigger no contiene el pipeline ni proporciona `/adw`. Debes crear ese workflow antes o elegir otro prompt que pueda completar el encargo sin preguntas intermedias.
+El trigger no contiene el pipeline: invoca el workflow `/adw`, definido en [`.claude/skills/adw/SKILL.md`](../.claude/skills/adw/SKILL.md). Ese archivo describe sus pasos y sus límites. También puedes elegir otro prompt que pueda completar el encargo sin preguntas intermedias.
 
 Las piezas disponibles son `/feature`, `/bug`, `/chore` y `/implement`, en `.claude/skills/`. Las tres primeras solo escriben un plan; `/implement` ejecuta un plan aprobado sin hacer commit, push ni PR. Tu workflow debe coordinar esas fases y definir sus pasos posteriores y sus límites.
 
