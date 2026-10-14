@@ -121,7 +121,7 @@ h1 {
 
 .task {
   display: grid;
-  grid-template-columns: 44px minmax(0, 1fr) auto;
+  grid-template-columns: 44px minmax(0, 1fr) auto auto;
   align-items: start;
   column-gap: 0.3rem;
   min-height: 61px;
@@ -198,6 +198,31 @@ h1 {
   opacity: 1;
 }
 
+.task-priority {
+  align-self: center;
+  padding: 0.1rem 0.5rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  white-space: nowrap;
+  color: var(--color-muted);
+  background: #f2f2ee;
+}
+
+.task-priority-alta {
+  color: #912a20;
+  background: #fff0eb;
+}
+
+.task-priority-baja {
+  background: transparent;
+  border: 1px solid var(--color-border);
+}
+
+.task-completed .task-priority {
+  opacity: 0.6;
+}
+
 .task-actions {
   display: flex;
   align-items: center;
@@ -261,11 +286,27 @@ input[type="text"] {
   flex: 1;
 }
 
+select {
+  min-height: 44px;
+  padding: 0.6rem 0.75rem;
+  font: inherit;
+  color: var(--color-text);
+  background: #ffffff;
+  border: 1px solid #92928a;
+  border-radius: 6px;
+}
+
+.new-task-row select {
+  flex-shrink: 0;
+  width: auto;
+}
+
 input::placeholder {
   color: var(--color-muted);
 }
 
-input[aria-invalid="true"] {
+input[aria-invalid="true"],
+select[aria-invalid="true"] {
   border-color: var(--color-danger);
   background: #fff9f7;
 }
@@ -369,6 +410,10 @@ input:focus-visible {
   font-weight: 600;
 }
 
+.edit-task label[for="task-priority"] {
+  margin-top: 1.25rem;
+}
+
 .edit-task-actions {
   display: flex;
   flex-wrap: wrap;
@@ -434,7 +479,7 @@ input:focus-visible {
   }
 
   .task {
-    grid-template-columns: 36px minmax(0, 1fr) auto;
+    grid-template-columns: 36px minmax(0, 1fr) auto auto;
   }
 
   .task-toggle-button,
