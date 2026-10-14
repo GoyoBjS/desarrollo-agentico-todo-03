@@ -39,5 +39,14 @@ document.addEventListener("submit", function (event) {
     pendingLabel.textContent = pending === 1 ? "pendiente" : "pendientes";
   }
 
-  fetch(form.action);
+  fetch(form.action, {
+    method: "POST",
+    body: new URLSearchParams(new FormData(form)),
+  }).then(function (response) {
+    if (!response.ok) {
+      window.location.reload();
+    }
+  }).catch(function () {
+    window.location.reload();
+  });
 });
