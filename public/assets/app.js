@@ -39,5 +39,10 @@ document.addEventListener("submit", function (event) {
     pendingLabel.textContent = pending === 1 ? "pendiente" : "pendientes";
   }
 
+  var clearCompleted = document.querySelector("[data-clear-completed]");
+  if (clearCompleted) {
+    clearCompleted.hidden = document.querySelectorAll(".task.task-completed").length === 0;
+  }
+
   fetch(form.action);
 });

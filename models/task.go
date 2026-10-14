@@ -59,6 +59,11 @@ func (t Tasks) PendingCount() int {
 	return count
 }
 
+// CompletedCount devuelve cuántas tareas de la colección están completadas.
+func (t Tasks) CompletedCount() int {
+	return len(t) - t.PendingCount()
+}
+
 // Validate se ejecuta en cada llamada a los métodos "pop.Validate*".
 func (t *Task) Validate(tx *pop.Connection) (*validate.Errors, error) {
 	verrs := validate.NewErrors()
