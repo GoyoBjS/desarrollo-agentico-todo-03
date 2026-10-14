@@ -374,3 +374,37 @@ func (as *ActionSuite) Test_TasksIndex_EmptyState_NoPendingCount() {
 	as.Equal(200, res.Code)
 	as.NotContains(res.Body.String(), "data-pending-count")
 }
+
+func (as *ActionSuite) Test_TasksToggle_MethodOverridePost() {
+	task := &models.Task{Title: "Completar con POST"}
+	verrs, err := as.DB.ValidateAndCreate(task)
+	as.NoError(err)
+	as.False(verrs.HasAny())
+
+	res := as.HTML("/tasks/%s/toggle", task.ID).Post(url.Values{"_method": {"PUT"}})
+	as.Equal(303, res.Code)
+	as.NoError(as.DB.Reload(task))
+	as.True(task.Completed)
+}
+
+func (as *ActionSuite) Test_TasksToggle_GetDoesNotToggle() {
+	task := &models.Task{Title: "No se completa con GET"}
+	verrs, err := as.DB.ValidateAndCreate(task)
+	as.NoError(err)
+	as.False(verrs.HasAny())
+
+	res := as.HTML("/tasks/%s/toggle", task.ID).Get()
+	as.Equal(404, res.Code)
+	as.NoError(as.DB.Reload(task))
+	as.False(task.Completed)
+}
+
+func (as *ActionSuite) Test_AppJS_TogglePersistsWithPost() {
+	res := as.HTML("/assets/app.js").Get()
+	as.Equal(200, res.Code)
+
+	body := res.Body.String()
+	as.Contains(body, `method: "POST"`)
+	as.Contains(body, "new FormData(form)")
+	as.NotContains(body, "fetch(form.action);")
+}
